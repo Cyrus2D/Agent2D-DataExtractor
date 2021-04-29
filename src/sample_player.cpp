@@ -164,6 +164,7 @@ SamplePlayer::~SamplePlayer()
 /*!
 
  */
+int SamplePlayer::player_port = 0;
 bool
 SamplePlayer::initImpl( CmdLineParser & cmd_parser )
 {
@@ -220,12 +221,14 @@ SamplePlayer::initImpl( CmdLineParser & cmd_parser )
   main decision
   virtual method in super class
 */
+#include "chain_action/DataExtractor.h"
 void
 SamplePlayer::actionImpl()
 {
     //
     // update strategy and analyzer
     //
+    SamplePlayer::player_port = this->config().port();
     Strategy::instance().update( world() );
     FieldAnalyzer::instance().update( world() );
 
@@ -235,6 +238,7 @@ SamplePlayer::actionImpl()
     M_field_evaluator = createFieldEvaluator();
     M_action_generator = createActionGenerator();
 
+    DataExtractor::i().update_history(this);
     ActionChainHolder::instance().setFieldEvaluator( M_field_evaluator );
     ActionChainHolder::instance().setActionGenerator( M_action_generator );
 
@@ -251,7 +255,7 @@ SamplePlayer::actionImpl()
     //
     // update action chain
     //
-    ActionChainHolder::instance().update( world() );
+    ActionChainHolder::instance().update( this );
 
 
     //
@@ -585,6 +589,7 @@ SamplePlayer::doPreprocess()
     //
     if ( doShoot() )
     {
+        DataExtractor::i().update_for_shoot(this, Bhv_StrictCheckShoot::target, Bhv_StrictCheckShoot::speed);
         return true;
     }
 
@@ -801,9 +806,9 @@ SamplePlayer::createActionGenerator() const
     //
     // direct pass
     //
-    // g->addGenerator( new ActGen_RangeActionChainLengthFilter
-    //                  ( new ActGen_DirectPass(),
-    //                    2, ActGen_RangeActionChainLengthFilter::MAX ) );
+     g->addGenerator( new ActGen_RangeActionChainLengthFilter
+                      ( new ActGen_DirectPass(),
+                        2, ActGen_RangeActionChainLengthFilter::MAX ) );
 
     //
     // short dribble
@@ -820,9 +825,9 @@ SamplePlayer::createActionGenerator() const
     //
     // simple dribble
     //
-    // g->addGenerator( new ActGen_RangeActionChainLengthFilter
-    //                  ( new ActGen_SimpleDribble(),
-    //                    2, ActGen_RangeActionChainLengthFilter::MAX ) );
+     g->addGenerator( new ActGen_RangeActionChainLengthFilter
+                      ( new ActGen_SimpleDribble(),
+                        2, ActGen_RangeActionChainLengthFilter::MAX ) );
 
     return ActionGenerator::ConstPtr( g );
 }

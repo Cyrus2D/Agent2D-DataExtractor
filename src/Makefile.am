@@ -155,7 +155,9 @@ CHAINACTIONSOURCES = \
 	chain_action/strict_check_pass_generator.cpp \
 	chain_action/strict_check_pass_generator.h \
 	chain_action/tackle_generator.cpp \
-	chain_action/tackle_generator.h
+	chain_action/tackle_generator.h \
+	chain_action/DataExtractor.cpp \
+    chain_action/DataExtractor.h
 
 COACHSOURCES = \
 	sample_coach.cpp \
@@ -227,19 +229,19 @@ noinst_DATA = \
 sample_player_SOURCES = \
 	$(CHAINACTIONSOURCES) \
 	$(PLAYERSOURCES)
-sample_player_CXXFLAGS = -W -Wall
+sample_player_CXXFLAGS = -W -Wall -std=c++14
 sample_player_LDFLAGS =
 sample_player_LDADD =
 
 sample_coach_SOURCES = \
 	$(COACHSOURCES)
-sample_coach_CXXFLAGS = -W -Wall
+sample_coach_CXXFLAGS = -W -Wall -std=c++14
 sample_coach_LDFLAGS =
 sample_coach_LDADD =
 
 sample_trainer_SOURCES = \
 	$(TRAINERSOURCES)
-sample_trainer_CXXFLAGS = -W -Wall
+sample_trainer_CXXFLAGS = -W -Wall -std=c++14
 sample_trainer_LDFLAGS =
 sample_trainer_LDADD =
 

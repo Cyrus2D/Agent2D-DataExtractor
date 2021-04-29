@@ -43,6 +43,8 @@
 #include <cstdio>
 #include <cmath>
 
+#include "DataExtractor.h"
+
 #define DEBUG_PROFILE
 // #define ACTION_CHAIN_DEBUG
 // #define DEBUG_PAINT_EVALUATED_POINTS
@@ -57,7 +59,7 @@
 using namespace rcsc;
 
 const size_t ActionChainGraph::DEFAULT_MAX_CHAIN_LENGTH = 4;
-const size_t ActionChainGraph::DEFAULT_MAX_EVALUATE_LIMIT = 500;
+const size_t ActionChainGraph::DEFAULT_MAX_EVALUATE_LIMIT = 1000;
 
 std::vector< std::pair< Vector2D, double > > ActionChainGraph::S_evaluated_points;
 
@@ -137,8 +139,10 @@ ActionChainGraph::ActionChainGraph( const FieldEvaluator::ConstPtr & evaluator,
 
  */
 void
-ActionChainGraph::calculateResult( const WorldModel & wm )
+ActionChainGraph::calculateResult( const PlayerAgent *agent )
 {
+    const WorldModel &wm = DataExtractor::i().option.output_worldMode == FULLSTATE ? agent->fullstateWorld() : agent->world();
+//    const WorldModel &wm = agent->world();
     debugPrintCurrentState( wm );
 
 #if (defined DEBUG_PROFILE) || (defined ACTION_CHAIN_LOAD_DEBUG)
@@ -173,6 +177,9 @@ ActionChainGraph::calculateResult( const WorldModel & wm )
                      M_best_chain_count,
                      M_result,
                      M_best_evaluation );
+
+    ActionStatePair *first_layer = M_result.begin().base();
+    DataExtractor::i().update(agent, first_layer);
 
 #if (defined DEBUG_PROFILE) || (defined ACTION_CHAIN_LOAD_DEBUG)
     const double msec = timer.elapsedReal();
@@ -497,6 +504,8 @@ ActionChainGraph::calculateResultBestFirstSearch( const WorldModel & wm,
             candidate_series.push_back( *it );
 
             double ev = (*M_evaluator)( (*it).state(), candidate_series );
+//            if(candidate_series.front().action().category() == CooperativeAction::Pass)
+//                ev += 10;
             ++(*n_evaluated);
 #ifdef ACTION_CHAIN_DEBUG
             write_chain_log( wm, M_chain_count, candidate_series, ev );
@@ -601,8 +610,8 @@ ActionChainGraph::debug_send_chain( PlayerAgent * agent,
                                     const std::vector< ActionStatePair > & path )
 {
     const double DIRECT_PASS_DIST = 3.0;
-
-    const PredictState current_state( agent->world() );
+    const WorldModel &wm = DataExtractor::i().option.output_worldMode == FULLSTATE ? agent->fullstateWorld() : agent->world();
+    const PredictState current_state( wm );
 
     for ( size_t i = 0; i < path.size(); ++i )
     {
