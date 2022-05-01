@@ -1,6 +1,31 @@
 # Data Extractor for agents
 In this repository, **Cyrus**  team have added C++ and Python scripts to **Agent2d-base** to extract data from agents in some specific situations.
 
+This version of agent2d base is compatible with https://osdn.net/projects/rctools/downloads/51941/librcsc-4.1.0.tar.gz/
+
+### How to install librcsc-4.1.0
+```bash
+wget https://osdn.net/projects/rctools/downloads/51941/librcsc-4.1.0.tar.gz/
+tar -xzvf librcsc-4.1.0.tar.gz
+cd librcsc-4.1.0
+./configure
+make
+sudo make install
+```
+
+### How to compile the repository
+In the first step you need to install librcsc-4.1.0, then download and extract the repository.
+```bash
+./bootstrap
+./configure
+cd src
+make
+```
+
+### How to generate a dataset
+In the first step you need to change the output directory in src/chain_action/DataExtractor.cpp line +191.
+In the next step you should make the code and run it.
+
 ## DataExtractor.cpp/.h
 In this class we have **update** function that is run every time chain action decide an action, and extract **features** and write them into files for each agent.
 the file names determine agent unum and opponents team name and if parallel games run at time, it separate them by port of agents.
