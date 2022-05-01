@@ -26,6 +26,8 @@ make
 In the first step you need to change the output directory in src/chain_action/DataExtractor.cpp line +191.
 In the next step you should make the code and run it.
 
+Default: The code generates dataset in /Path-To-Rep/dataset/
+
 ## DataExtractor.cpp/.h
 In this class we have **update** function that is run every time chain action decide an action, and extract **features** and write them into files for each agent.
 the file names determine agent unum and opponents team name and if parallel games run at time, it separate them by port of agents.
