@@ -188,7 +188,7 @@ void DataExtractor::init_file(const rcsc::WorldModel &wm) {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
 
-    std::string dir = "/home/nader/data/robo_data/other_team/";
+    std::string dir = "../dataset/";
     strftime(buffer, sizeof(buffer), "%Y-%m-%d-%H-%M-%S", timeinfo);
     std::string str(buffer);
     std::string rand_name = std::to_string(SamplePlayer::player_port);
